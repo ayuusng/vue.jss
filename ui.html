@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manajemen Laundry</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="app">
+        <h1>Manajemen Laundry</h1>
+
+        <table>
+            <tr>
+                <th>Nama</th>
+                <th>Gambar</th>
+                <th>Harga</th>
+                <th>Jumlah</th>
+                <th>Aksi</th>
+            </tr>
+            <tr v-for="(item, index) in filteredLaundry" :key="index">
+                <td>{{ item.name }}</td>
+                <td><img :src="item.image" width="100px" height="100px" alt="Foto {{ item.name }}" class="item-image"></td>
+                <td>{{ item.price }}</td>
+                <td>
+                    <button @click="decrementQuantity(index)">-</button>
+                    {{ item.quantity }}
+                    <button @click="incrementQuantity(index)">+</button>
+                </td>
+                <td><button @click="removeItem(index)">Hapus</button></td>
+            </tr>
+        </table>
+
+        <div class="total-price">
+            Total Harga: {{ total }}
+        </div>
+
+        <button @click="saveOrder">Simpan Pemesanan</button>
+
+        <!-- Detail Pemesanan -->
+        <div class="order-details" v-if="orderSaved">
+            <h2>Detail Pemesanan:</h2>
+            <ul>
+                <li v-for="item in laundry" v-if="item.quantity > 0">
+                    <h3>{{ item.name }}</h3>
+                    <img :src="item.image" width="100px" height="100px" alt="Foto {{ item.name }}" class="item-image">
+                    <p>Harga: {{ item.price }}</p>
+                    <p>Jumlah: {{ item.quantity }}</p>
+                </li>
+            </ul>
+            <p>Total Harga: {{ total }}</p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14"></script>
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                laundry: [
+                    { name: 'Kemeja', price: 10000, quantity: 0, image: '/images/yuyu/foto/baju.jpeg' },
+                    { name: 'Celana', price: 8000, quantity: 0, image: '/images/yuyu/foto/celana.jpg' },
+                    { name: 'Baju Tidur', price: 12000, quantity: 0, image: '/images/yuyu/foto/baju tidur.jpeg' },
+                ],
+                searchQuery: '',
+                orderSaved: false, // Untuk menampilkan hasil pemesanan
+            },
+            computed: {
+                filteredLaundry() {
+                    return this.laundry.filter(item => item.name.toLowerCase().includes(this.searchQuery.toLowerCase()));
+                },
+                total() {
+                    return this.laundry.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+                },
+            },
+            methods: {
+                incrementQuantity(index) {
+                    this.laundry[index].quantity++;
+                },
+                decrementQuantity(index) {
+                    if (this.laundry[index].quantity > 0) {
+                        this.laundry[index].quantity--;
+                    }
+                },
+                removeItem(index) {
+                    this.laundry.splice(index, 1);
+                },
+                saveOrder() {
+                    // Implement logic to save the order here
+                    // You can send the order data to a server or store it locally
+                    // Set orderSaved to true to display the result message
+                    this.orderSaved = true;
+                },
+            },
+        });
+    </script>
+</body>
+</html>
